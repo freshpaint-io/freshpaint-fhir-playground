@@ -42,7 +42,7 @@ const (
 	timeZone = "Australia/Sydney"
 )
 
-func main() {
+func GetPatientPOC() {
 	httpGetURL := "http://localhost:8080/fhir/Patient/DDONYVATHBD6R3KW"
 
 	request, error := http.NewRequest("GET", httpGetURL, nil)
@@ -74,4 +74,43 @@ func main() {
 	contained := unmarshalled.(*r4pb.ContainedResource)
 	patient := contained.GetPatient()
 	fmt.Println(patient.GetName()[0].GetGiven())
+}
+
+func GetEncounterPOC() {
+	httpGetURL := "http://localhost:8080/fhir/Encounter/DDONYVATHBD6R32Y"
+
+	request, error := http.NewRequest("GET", httpGetURL, nil)
+	if error != nil {
+		log.Fatalf("Failed to create request %v", error)
+	}
+	request.Header.Set("Content-Type", "application/fhir+json; charset=UTF-8")
+	client := &http.Client{}
+	response, error := client.Do(request)
+	if error != nil {
+		panic(error)
+	}
+	defer response.Body.Close()
+
+	body, error := ioutil.ReadAll(response.Body)
+	if error != nil {
+		log.Fatalf("Failed to read response body %v", error)
+	}
+
+	um, err := jsonformat.NewUnmarshaller(timeZone, fhirversion.R4)
+	if err != nil {
+		log.Fatalf("Failed to create unmarshaller %v", err)
+	}
+	unmarshalled, err := um.Unmarshal(body)
+	if err != nil {
+		log.Fatalf("Failed to unmarshal patient %v", err)
+	}
+
+	contained := unmarshalled.(*r4pb.ContainedResource)
+	encounter := contained.GetEncounter()
+	fmt.Println(encounter.GetSubject().GetPatientId())
+}
+
+func main() {
+	GetPatientPOC()
+	GetEncounterPOC()
 }
