@@ -78,3 +78,9 @@ https://hapifhir.io/hapi-fhir/docs/getting_started/downloading_and_importing.htm
 https://github.com/FirelyTeam/fhirstarters/tree/master/java/hapi-fhirstarters-simple-server/
 https://hapifhir.io/hapi-fhir/docs/server_plain/server_types.html#plain-server-facade
 https://github.com/hapifhir/hapi-fhir-jpaserver-starter
+
+# Uploading data generated from Synthea to Blaze
+Follow the documentation from Synthea on how to locally generate patient test data: https://github.com/synthetichealth/synthea/wiki/Basic-Setup-and-Running
+
+Generate data from Synthea as a transaction type: java -jar synthea-with-dependencies.jar --exporter.fhir.transaction_bundle true
+Upload a directory: blazectl --server http://localhost:8080/fhir upload /PWD/output/fhir/
